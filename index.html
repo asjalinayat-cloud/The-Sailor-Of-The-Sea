@@ -1,0 +1,594 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sailor of the Sea</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Georgia, serif;
+    background: linear-gradient(135deg, #071b33, #123d59, #061522);
+    color: white;
+    min-height: 100vh;
+}
+
+header {
+    text-align: center;
+    padding: 30px 15px;
+    background: rgba(0,0,0,0.5);
+    border-bottom: 3px solid #e5a52b;
+}
+
+header h1 {
+    color: #ffc247;
+    font-size: clamp(28px, 5vw, 45px);
+    text-shadow: 2px 3px black;
+}
+
+header p {
+    color: #ddd;
+    margin-top: 10px;
+}
+
+.container {
+    max-width: 850px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.panel {
+    background: rgba(0,0,0,0.55);
+    border: 2px solid #d99b30;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px #0008;
+}
+
+h2 {
+    color: #ffc247;
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+}
+
+button {
+    background: #d99424;
+    color: #151515;
+    border: none;
+    padding: 12px 18px;
+    margin: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #ffca57;
+    transform: scale(1.04);
+}
+
+button:disabled {
+    background: #777;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.center {
+    text-align: center;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    text-align: center;
+}
+
+.stat {
+    background: #142e40;
+    padding: 15px 5px;
+    border-radius: 10px;
+}
+
+.stat strong {
+    display: block;
+    color: #ffc247;
+    font-size: 22px;
+    margin-top: 5px;
+}
+
+.bar {
+    height: 16px;
+    background: #444;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 10px 0 18px;
+}
+
+.health {
+    height: 100%;
+    width: 100%;
+    background: #28bd65;
+    transition: width 0.3s;
+}
+
+.enemy {
+    color: #ff6969;
+    text-align: center;
+    font-size: 24px;
+    margin: 15px;
+}
+
+#log {
+    height: 180px;
+    overflow-y: auto;
+    background: #071521;
+    padding: 15px;
+    border-radius: 10px;
+    line-height: 1.7;
+    color: #ddd;
+}
+
+.hidden {
+    display: none;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #aaa;
+}
+
+@media(max-width: 500px) {
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .panel {
+        padding: 15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🏴‍☠️ THE SAILOR OF THE SEA</h1>
+    <p>Your journey to become the Pirate King begins here!</p>
+</header>
+
+<div class="container">
+
+    <!-- START SCREEN -->
+    <section class="panel center" id="startScreen">
+        <h2>Welcome, Future Pirate King!</h2>
+
+        <p>Explore the Grand Line, defeat enemies, find treasure
+        and discover the legendary One Piece!</p>
+
+        <br>
+
+        <label for="playerName">Enter your pirate name:</label>
+        <input id="playerName" type="text"
+               placeholder="Your pirate name">
+
+        <label for="character">Choose your fighting style:</label>
+        <select id="character">
+            <option value="25">⚔️ Sword Fighter</option>
+            <option value="35">🍈 Devil Fruit User</option>
+            <option value="30">🎯 Sniper</option>
+        </select>
+
+        <button onclick="startGame()">START ADVENTURE</button>
+    </section>
+
+    <!-- GAME SCREEN -->
+    <section id="gameScreen" class="hidden">
+
+        <div class="panel">
+            <h2>🏴‍☠️ Pirate Status</h2>
+
+            <div class="stats">
+                <div class="stat">
+                    Captain
+                    <strong id="nameDisplay">Pirate</strong>
+                </div>
+
+                <div class="stat">
+                    ❤️ Health
+                    <strong id="healthDisplay">100</strong>
+                </div>
+
+                <div class="stat">
+                    💰 Gold
+                    <strong id="goldDisplay">0</strong>
+                </div>
+            </div>
+
+            <p style="margin-top:20px">Health Bar</p>
+            <div class="bar">
+                <div class="health" id="healthBar"></div>
+            </div>
+
+            <p>⚔️ Attack Power: <span id="attackDisplay">25</span></p>
+            <p>⭐ Level: <span id="levelDisplay">1</span></p>
+        </div>
+
+        <div class="panel center">
+            <h2 id="islandTitle">🌊 East Blue</h2>
+
+            <p id="story">
+                Your adventure begins! A mysterious Marine
+                ship is approaching.
+            </p>
+
+            <br>
+
+            <div id="exploreButtons">
+                <button onclick="startBattle()">
+                    ⚔️ Fight Enemy
+                </button>
+
+                <button onclick="findTreasure()">
+                    💰 Find Treasure
+                </button>
+
+                <button onclick="sailNext()">
+                    🚢 Sail to Next Island
+                </button>
+            </div>
+
+            <div id="battleButtons" class="hidden">
+                <div class="enemy" id="enemyName">
+                    Marine Soldier
+                </div>
+
+                <p>Enemy Health: <span id="enemyHealth">60</span></p>
+
+                <div class="bar">
+                    <div class="health" id="enemyBar"></div>
+                </div>
+
+                <button onclick="attackEnemy()">
+                    ⚔️ Normal Attack
+                </button>
+
+                <button onclick="specialAttack()">
+                    🔥 Special Attack
+                </button>
+
+                <button onclick="runAway()">
+                    🏃 Run Away
+                </button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>📜 Adventure Log</h2>
+            <div id="log">
+                Welcome to the Grand Line!
+            </div>
+        </div>
+
+    </section>
+
+    <!-- END SCREEN -->
+    <section id="endScreen" class="panel center hidden">
+        <h2 id="endTitle">GAME OVER</h2>
+        <p id="endMessage"></p>
+        <br>
+        <button onclick="location.reload()">🔄 Play Again</button>
+    </section>
+
+</div>
+
+<footer>
+    <p>THE SAILOR OF THE SEA | Pirate Adventure</p>
+    <p>Inspired by One Piece. Fan-made game.</p>
+</footer>
+
+<script>
+
+// PLAYER DATA
+let player = {
+    name: "",
+    health: 100,
+    maxHealth: 100,
+    attack: 25,
+    gold: 0,
+    level: 1
+};
+
+let enemy = {
+    name: "",
+    health: 60,
+    maxHealth: 60,
+    attack: 12
+};
+
+let island = 0;
+let bossDefeated = false;
+let battling = false;
+
+const islands = [
+    "🌊 East Blue",
+    "🏜️ Alabasta",
+    "🚂 Water 7",
+    "🌸 Wano",
+    "☠️ Laugh Tale"
+];
+
+const enemies = [
+    { name: "Marine Soldier", health: 60, attack: 12 },
+    { name: "Desert Bandit", health: 90, attack: 15 },
+    { name: "CP Agent", health: 120, attack: 18 },
+    { name: "Samurai Warrior", health: 150, attack: 22 }
+];
+
+// START GAME
+function startGame() {
+    let name = document.getElementById("playerName").value.trim();
+
+    if (!name) {
+        alert("Enter your pirate name first!");
+        return;
+    }
+
+    player.name = name;
+    player.attack = Number(document.getElementById("character").value);
+
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("gameScreen").classList.remove("hidden");
+
+    document.getElementById("nameDisplay").innerText = name;
+
+    updateStats();
+    log("Welcome Captain " + name + "!");
+    log("Your journey to find the One Piece begins!");
+}
+
+// UPDATE PLAYER STATUS
+function updateStats() {
+    document.getElementById("healthDisplay").innerText = player.health;
+    document.getElementById("goldDisplay").innerText = player.gold;
+    document.getElementById("attackDisplay").innerText = player.attack;
+    document.getElementById("levelDisplay").innerText = player.level;
+
+    let healthPercent = Math.max(0, player.health / player.maxHealth * 100);
+
+    document.getElementById("healthBar").style.width =
+        healthPercent + "%";
+}
+
+// LOG MESSAGES
+function log(message) {
+    let logBox = document.getElementById("log");
+
+    logBox.innerHTML += "<br>➤ " + message;
+    logBox.scrollTop = logBox.scrollHeight;
+}
+
+// START BATTLE
+function startBattle() {
+    if (battling) return;
+
+    battling = true;
+
+    if (island === 4) {
+        enemy = {
+            name: "👑 Legendary Pirate King",
+            health: 250,
+            maxHealth: 250,
+            attack: 25
+        };
+    } else {
+        let data = enemies[island];
+
+        enemy = {
+            name: data.name,
+            health: data.health,
+            maxHealth: data.health,
+            attack: data.attack
+        };
+    }
+
+    document.getElementById("exploreButtons").classList.add("hidden");
+    document.getElementById("battleButtons").classList.remove("hidden");
+
+    document.getElementById("enemyName").innerText = enemy.name;
+
+    log("A wild " + enemy.name + " appeared!");
+
+    updateEnemy();
+}
+
+// UPDATE ENEMY
+function updateEnemy() {
+    document.getElementById("enemyHealth").innerText =
+        Math.max(0, enemy.health);
+
+    document.getElementById("enemyBar").style.width =
+        Math.max(0, enemy.health / enemy.maxHealth * 100) + "%";
+}
+
+// PLAYER ATTACK
+function attackEnemy() {
+    if (!battling) return;
+
+    let damage = player.attack + Math.floor(Math.random() * 10);
+
+    enemy.health -= damage;
+
+    log("You dealt " + damage + " damage!");
+
+    checkBattle();
+}
+
+// SPECIAL ATTACK
+function specialAttack() {
+    if (!battling) return;
+
+    let damage = player.attack * 2;
+
+    enemy.health -= damage;
+
+    player.health -= 5;
+
+    log("🔥 SPECIAL ATTACK! You dealt " + damage + " damage!");
+    log("Your special move cost you 5 health.");
+
+    updateStats();
+    checkBattle();
+}
+
+// ENEMY TURN
+function enemyTurn() {
+    if (!battling) return;
+
+    let damage = enemy.attack + Math.floor(Math.random() * 8);
+
+    player.health -= damage;
+
+    log(enemy.name + " attacked you for " + damage + " damage!");
+
+    updateStats();
+
+    if (player.health <= 0) {
+        player.health = 0;
+        updateStats();
+        endGame(false);
+    }
+}
+
+// CHECK BATTLE
+function checkBattle() {
+    updateEnemy();
+
+    if (enemy.health <= 0) {
+        enemy.health = 0;
+        updateEnemy();
+
+        battling = false;
+
+        player.gold += 150;
+        player.level++;
+        player.health = Math.min(player.maxHealth, player.health + 20);
+
+        log("🏆 You defeated " + enemy.name + "!");
+        log("You earned 150 gold and gained a level!");
+        log("You recovered 20 health!");
+
+        updateStats();
+
+        if (island === 4) {
+            bossDefeated = true;
+            endGame(true);
+            return;
+        }
+
+        document.getElementById("battleButtons").classList.add("hidden");
+        document.getElementById("exploreButtons").classList.remove("hidden");
+
+        return;
+    }
+
+    enemyTurn();
+}
+
+// ESCAPE
+function runAway() {
+    if (!battling) return;
+
+    log("You escaped from the battle!");
+
+    battling = false;
+
+    document.getElementById("battleButtons").classList.add("hidden");
+    document.getElementById("exploreButtons").classList.remove("hidden");
+}
+
+// TREASURE
+function findTreasure() {
+    let reward = Math.floor(Math.random() * 400) + 100;
+
+    player.gold += reward;
+
+    log("💰 You discovered a treasure chest!");
+    log("You collected " + reward + " gold coins!");
+
+    updateStats();
+}
+
+// NEXT ISLAND
+function sailNext() {
+    if (battling) return;
+
+    if (island >= 4) {
+        log("You must defeat the final boss!");
+        return;
+    }
+
+    island++;
+
+    document.getElementById("islandTitle").innerText =
+        islands[island];
+
+    document.getElementById("story").innerText =
+        "Welcome to " + islands[island] +
+        "! New enemies and treasures await you.";
+
+    log("🚢 You sailed to " + islands[island] + "!");
+
+    if (island === 4) {
+        document.getElementById("story").innerText =
+            "You have reached Laugh Tale! Defeat the Legendary Pirate King to claim the One Piece!";
+    }
+}
+
+// GAME END
+function endGame(won) {
+    document.getElementById("gameScreen").classList.add("hidden");
+    document.getElementById("endScreen").classList.remove("hidden");
+
+    if (won) {
+        document.getElementById("endTitle").innerText =
+            "🏆 YOU FOUND THE ONE PIECE!";
+
+        document.getElementById("endMessage").innerText =
+            "Congratulations Captain " + player.name +
+            "! You defeated the final boss and became the Pirate King! " +
+            "Your final gold: " + player.gold;
+    } else {
+        document.getElementById("endTitle").innerText =
+            "☠️ GAME OVER";
+
+        document.getElementById("endMessage").innerText =
+            "Captain " + player.name +
+            ", your adventure has ended. Better luck next time!";
+    }
+}
+
+</script>
+
+</body>
+</html>
